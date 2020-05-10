@@ -17,9 +17,10 @@ type ProxyRule struct {
 }
 
 type Config struct {
-	LocalPort   uint16
-	Destination string
-	ProxyRules []ProxyRule
+	LocalPort      uint16
+	Destination    string
+	livelinessPath string
+	ProxyRules     []ProxyRule
 }
 
 func IsValidConfig(config Config) bool {
@@ -31,11 +32,11 @@ func IsValidConfig(config Config) bool {
 	return true
 }
 
-
 func GetDefaultConfig() Config {
 	config := Config{
-		LocalPort:   8080,
-		Destination: "",
+		LocalPort:      8080,
+		Destination:    "",
+		livelinessPath: "/alive",
 		ProxyRules: []ProxyRule{{
 			Pattern: "/",
 			Claims:  nil,
@@ -56,4 +57,3 @@ func (c Config) getURL() *url.URL {
 	}
 	return destURL
 }
-

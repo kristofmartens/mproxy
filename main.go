@@ -28,11 +28,13 @@ func main() {
 	// Retrieve the configuration for the proxy server
 	config := getConfig()
 
+	// Create the proxy server based on the provided configuration
 	proxyServer, ok := mproxy.CreateProxy(config)
 	if ok != mproxy.ErrorNoError {
 		log.Fatal("Could not create proxy server: ", ok)
 	}
 
+	// Start the proxy server
 	ok = proxyServer.StartProxy()
 	if ok != mproxy.ErrorNoError {
 		log.Fatal("Could not start proxy server: ", ok)
