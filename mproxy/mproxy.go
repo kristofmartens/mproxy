@@ -8,15 +8,26 @@ import (
 	"net/url"
 )
 
+type OIDCClaim struct {
+	ClaimName     string
+	AllowedClaims []string
+}
+
+type ProxyRule struct {
+	Pattern string
+	Claims  []OIDCClaim
+}
+
 type Config struct {
 	LocalPort   uint16
 	Destination string
+	ProxyRules []ProxyRule
 }
 
 type MProxy struct {
 	config        Config
 	listenAddress string
-	url           *url.URL
+	destURL       *url.URL
 	running       bool
 }
 
@@ -30,6 +41,10 @@ func GetDefaultConfig() Config {
 	config := Config{
 		LocalPort:   8080,
 		Destination: "",
+		ProxyRules: []ProxyRule{{
+			Pattern: "/",
+			Claims:  nil,
+		}},
 	}
 
 	return config
@@ -45,7 +60,7 @@ func CreateProxy(config Config) (MProxy, int) {
 	mp := MProxy{
 		config:        config,
 		listenAddress: config.getListenAddress(),
-		url:           config.getURL(),
+		destURL:       config.getURL(),
 		running:       false,
 	}
 
@@ -55,18 +70,29 @@ func CreateProxy(config Config) (MProxy, int) {
 func (p *MProxy) StartProxy() int {
 	ok := ErrorNoError
 
+	// Configure the different paths to proxy and their authorization rules
 	http.HandleFunc("/",
 		func(writer http.ResponseWriter, request *http.Request) {
 			fmt.Println("headers:", request.Header)
 			fmt.Println("Body:", request.Body)
-			httputil.NewSingleHostReverseProxy(p.url).ServeHTTP(writer, request)
+			httputil.NewSingleHostReverseProxy(p.destURL).ServeHTTP(writer, request)
 		})
 
+	// Set running state to true
+	p.setRunning(true)
+	defer p.setRunning(false)
+
+	// Start the actual proxy-ing
 	if err := http.ListenAndServe(p.config.getListenAddress(), nil); err != nil {
 		ok = ErrorProxyInitError
+		return ok
 	}
 
 	return ok
+}
+
+func (p *MProxy) setRunning(running bool) {
+	p.running = running
 }
 
 func IsValidConfig(config Config) bool {
@@ -83,9 +109,9 @@ func (c Config) getListenAddress() string {
 }
 
 func (c Config) getURL() *url.URL {
-	url, ok := url.Parse(c.Destination)
+	destURL, ok := url.Parse(c.Destination)
 	if ok != nil {
 		log.Fatal("Invalid destination", ok)
 	}
-	return url
+	return destURL
 }

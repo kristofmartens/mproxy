@@ -7,7 +7,7 @@ import (
 	"mproxy/mproxy"
 )
 
-func main() {
+func getConfig() mproxy.Config {
 	port := flag.Uint("port", 8080, "Port proxy server will listen to")
 	dest := flag.String("dest", "", "The address to forward the requests to")
 	flag.Parse()
@@ -20,6 +20,13 @@ func main() {
 	config := mproxy.GetDefaultConfig()
 	config.LocalPort = uint16(*port)
 	config.Destination = *dest
+
+	return config
+}
+
+func main() {
+	// Retrieve the configuration for the proxy server
+	config := getConfig()
 
 	proxyServer, ok := mproxy.CreateProxy(config)
 	if ok != mproxy.ErrorNoError {
