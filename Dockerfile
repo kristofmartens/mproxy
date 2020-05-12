@@ -2,7 +2,7 @@ FROM 725028247697.dkr.ecr.eu-west-1.amazonaws.com/cicd/yad/kbc-amazon-linux as b
 
 RUN yum update -y && yum install -y golang && yum clean all && rm -rf /var/cache/yum
 WORKDIR /root/go/src/mproxy
-COPY src .
+COPY . .
 RUN go install
 
 FROM 725028247697.dkr.ecr.eu-west-1.amazonaws.com/cicd/yad/kbc-amazon-linux

@@ -2,6 +2,7 @@ package mproxy
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
@@ -12,19 +13,16 @@ type MProxy struct {
 	listenAddress string
 	destURL       *url.URL
 	running       bool
+	jwtKeys       string
 }
 
-const (
-	ErrorNoError = iota
-	ErrorInvalidConfig
-	ErrorProxyInitError
-)
-
-func CreateProxy(config Config) (MProxy, int) {
-	ok := ErrorNoError
-
+func CreateProxy(config Config) (MProxy, error) {
 	if !IsValidConfig(config) {
-		ok = ErrorInvalidConfig
+		ok := Error{
+			Code: ErrorInvalidConfig,
+			Msg:  "Could not create proxy, invalid configuration provided",
+		}
+		return MProxy{}, &ok
 	}
 
 	mp := MProxy{
@@ -34,12 +32,10 @@ func CreateProxy(config Config) (MProxy, int) {
 		running:       false,
 	}
 
-	return mp, ok
+	return mp, nil
 }
 
-func (p *MProxy) StartProxy() int {
-	ok := ErrorNoError
-
+func (p *MProxy) StartProxy() error {
 	// Add proxy rule for each configured path
 	for _, proxyRule := range p.config.ProxyRules {
 		// Configure the different paths to proxy and their authorization rules
@@ -67,15 +63,27 @@ func (p *MProxy) StartProxy() int {
 	p.setRunning(true)
 	defer p.setRunning(false)
 
+	log.Println("Starting proxy server with config:\n", p.config)
+
 	// Start the actual proxy-ing
-	if err := http.ListenAndServe(p.config.getListenAddress(), nil); err != nil {
-		ok = ErrorProxyInitError
-		return ok
+	if ok := http.ListenAndServe(p.config.getListenAddress(), nil); ok != nil {
+		return &Error{
+			Code: ErrorProxyInitError,
+			Msg:  "Error running the proxy server",
+			Err:  ok,
+		}
 	}
 
-	return ok
+	return nil
 }
 
 func (p *MProxy) setRunning(running bool) {
 	p.running = running
+}
+
+func (p *MProxy) getJWTKeys() (string, error){
+	if len(p.jwtKeys) == 0 {
+
+	}
+	return p.jwtKeys, nil
 }

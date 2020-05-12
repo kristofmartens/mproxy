@@ -2,26 +2,40 @@ package main
 
 import (
 	"flag"
-	"log"
+	"fmt"
 	"math"
 	"mproxy/mproxy"
+	"os"
 )
 
 func getConfig() mproxy.Config {
 	port := flag.Uint("port", 8080, "Port proxy server will listen to")
 	dest := flag.String("dest", "", "The address to forward the requests to")
+	dUrl := flag.String("discovery-url", "", "The OAUTH discovery url")
+	ath := flag.String("access-token-header", "X-Amzn-Oidc-Accesstoken",
+		"HTTP header that contains the access token to verify")
 	flag.Parse()
 
 	switch {
 	case *port > math.MaxUint16:
-		log.Fatal("Invalid port")
+		fmt.Println("Invalid port")
+		os.Exit(mproxy.ErrorInvalidConfig)
 	case len(*dest) == 0:
-		log.Fatal("No destination provided")
+		fmt.Println("No destination provided")
+		os.Exit(mproxy.ErrorInvalidConfig)
+	case len(*dUrl) == 0:
+		fmt.Println("No or invalid discovery-url provided")
+		os.Exit(mproxy.ErrorInvalidConfig)
+	case len(*ath) == 0:
+		fmt.Println("No or invalid access-token-header provided")
+		os.Exit(mproxy.ErrorInvalidConfig)
 	}
 
 	config := mproxy.GetDefaultConfig()
 	config.LocalPort = uint16(*port)
 	config.Destination = *dest
+	config.DiscoveryUrl = *dUrl
+	config.AccessTokenHeader = *ath
 
 	return config
 }
@@ -32,13 +46,15 @@ func main() {
 
 	// Create the proxy server based on the provided configuration
 	proxyServer, ok := mproxy.CreateProxy(config)
-	if ok != mproxy.ErrorNoError {
-		log.Fatal("Could not create proxy server: ", ok)
+	if ok != nil {
+		fmt.Println(ok.Error())
+		os.Exit(ok.(*mproxy.Error).Code)
 	}
 
 	// Start the proxy server
 	ok = proxyServer.StartProxy()
-	if ok != mproxy.ErrorNoError {
-		log.Fatal("Could not start proxy server: ", ok)
+	if ok != nil {
+		fmt.Println(ok.Error())
+		os.Exit(ok.(*mproxy.Error).Code)
 	}
 }
