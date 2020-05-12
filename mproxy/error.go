@@ -7,6 +7,7 @@ const (
 	ErrorNoError = iota
 	ErrorInvalidConfig
 	ErrorProxyInitError
+	ErrorHttpError
 )
 
 type Error struct {

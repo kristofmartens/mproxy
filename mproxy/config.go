@@ -2,7 +2,6 @@ package mproxy
 
 import (
 	"fmt"
-	"log"
 	"net/url"
 )
 
@@ -51,10 +50,36 @@ func (c Config) getListenAddress() string {
 	return fmt.Sprintf(":%d", c.LocalPort)
 }
 
-func (c Config) getURL() *url.URL {
-	destURL, ok := url.Parse(c.Destination)
-	if ok != nil {
-		log.Fatal("Invalid destination", ok)
+func (c Config) getURL() (*url.URL, error) {
+	destURL, err := url.Parse(c.Destination)
+	if err != nil {
+		return nil, &Error{
+			Code: ErrorInvalidConfig,
+			Msg:  "Could not parse URL",
+			Err:  err,
+		}
 	}
-	return destURL
+	return destURL, err
+}
+
+func (c Config) getJWTKeys() (string, error) {
+	oidcCfg, err := httpGetJson(fmt.Sprintf("%s/%s", c.DiscoveryUrl, OidcConfig))
+	if err != nil {
+		return "", &Error{
+			Code: ErrorHttpError,
+			Msg:  "Could not retrieve discovery URL",
+			Err:  err,
+		}
+	}
+
+	jwtKeys, err := httpGetJson(oidcCfg[OidcConfigJwksUri].(string))
+	if err != nil {
+		return "", &Error{
+			Code: ErrorHttpError,
+			Msg:  "Could not retrieve JWT keys",
+			Err:  err,
+		}
+	}
+
+	return fmt.Sprintf("%v", jwtKeys), nil
 }
