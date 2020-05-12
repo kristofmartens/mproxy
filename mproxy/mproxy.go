@@ -7,7 +7,6 @@ import (
 	"net/url"
 )
 
-
 type MProxy struct {
 	config        Config
 	listenAddress string

@@ -13,8 +13,10 @@ func getConfig() mproxy.Config {
 	flag.Parse()
 
 	switch {
-	case *port > math.MaxUint16: log.Fatal("Invalid port")
-	case len(*dest) == 0: log.Fatal("No destination provided")
+	case *port > math.MaxUint16:
+		log.Fatal("Invalid port")
+	case len(*dest) == 0:
+		log.Fatal("No destination provided")
 	}
 
 	config := mproxy.GetDefaultConfig()
