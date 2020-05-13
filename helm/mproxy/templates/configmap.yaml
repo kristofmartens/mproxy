@@ -5,4 +5,4 @@ metadata:
   labels:
     {{- include "mproxy.labels" . | nindent 4 }}
 data:
-  config: {{ .Values.mproxy.config | toString }}
+  config: {{ .Values.mproxy.config | toYaml | quote }}
