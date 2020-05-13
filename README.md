@@ -20,9 +20,11 @@ For convenience I also added a helm chart to easily install the reverse proxy wi
 For more information about how to use and install helm please go to https://helm.sh/
 
 ## Running the proxy
-MProxy requires a config file in yaml format only requiring a small set of parameters. Here is an example configuration
-file for use with AWS Cognito:
-
+MProxy requires a config file in yaml format only requiring a small set of parameters. You start the proxy like this:
+```shell script
+mproxy -config <config-file>
+```
+Here is an example configuration file for use with AWS Cognito:
 ```yaml
 # Local port where the mproxy will listen on (default 8080)
 localPort: 8080
