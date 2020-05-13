@@ -5,8 +5,40 @@
 replicaCount: 1
 
 image:
-  repository: nginx
+  repository: mproxy
+  tag: 0.1.0
   pullPolicy: IfNotPresent
+
+mproxy:
+  # Configuration file values
+  config:
+    # Location to forward all traffic to (mandatory)
+    destination:
+    # Discovery URL of where to retrieve all OAUTH/OIDC endpoints (mandatory)
+    discoveryUrl:
+    # HTTP header that contains the access token (mandatory)
+    accessTokenHeader:
+    # Example proxy rules configuration for AWS cognito Authorizations
+    # proxyRules:
+    #    # URL pattern
+    #  - pattern: /
+    #    # Checks the claims of the access token to verify whether all are valid
+    #    claims:
+    #        # The name of the claim to verify
+    #      - claimName: cognito:groups
+    #        # Allowed values in the claim
+    #        allowedClaims:
+    #          - admin
+    #          - user
+    #        # If true, all claims need to be present. Otherwise only one claim is required
+    #        requireAllClaims: false
+    proxyRules:
+      - pattern: /
+        claims: []
+    # Local port where the mproxy will listen on (default 8080)
+    localPort: 8080
+    # Liveliness path to check whether service is still up
+    livelinessPath: /alive
 
 imagePullSecrets: []
 nameOverride: ""
