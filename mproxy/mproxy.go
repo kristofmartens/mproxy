@@ -23,10 +23,11 @@ type MProxy struct {
 }
 
 func CreateProxy(config Config) (MProxy, error) {
-	if !IsValidConfig(config) {
+	if valid, err := IsValidConfig(config); !valid {
 		return MProxy{}, &Error{
 			Code: ErrorInvalidConfig,
 			Msg:  "Could not create proxy, invalid configuration provided",
+			Err:  err,
 		}
 	}
 
@@ -152,7 +153,7 @@ func (p *MProxy) StartProxy() error {
 	}
 
 	// Liveliness probe
-	http.HandleFunc(p.config.livelinessPath, func(writer http.ResponseWriter, request *http.Request) {
+	http.HandleFunc(p.config.LivelinessPath, func(writer http.ResponseWriter, request *http.Request) {
 		defer request.Body.Close()
 		if p.running {
 			writer.WriteHeader(200)

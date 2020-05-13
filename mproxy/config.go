@@ -3,51 +3,80 @@ package mproxy
 import (
 	"fmt"
 	"github.com/lestrrat/go-jwx/jwk"
+	"gopkg.in/yaml.v2"
+	"io/ioutil"
 	"net/url"
 )
 
 type OIDCClaim struct {
-	ClaimName        string
-	AllowedClaims    []string
+	ClaimName     string   `yaml:"claimName"`
+	AllowedClaims []string `yaml:"allowedClaims"`
 	// TODO: Not yet implemented functionality
-	RequireAllClaims bool
+	RequireAllClaims bool `yaml:"requireAllClaims"`
 }
 
 type ProxyRule struct {
-	Pattern string
-	Claims  []OIDCClaim
+	Pattern string      `yaml:"pattern"`
+	Claims  []OIDCClaim `yaml:"claims"`
 }
 
 type Config struct {
-	LocalPort         uint16
-	Destination       string
-	DiscoveryUrl      string
-	AccessTokenHeader string
-	ProxyRules        []ProxyRule
-	livelinessPath    string
+	LocalPort         uint16      `yaml:"localPort"`
+	Destination       string      `yaml:"destination"`
+	DiscoveryUrl      string      `yaml:"discoveryUrl"`
+	AccessTokenHeader string      `yaml:"accessTokenHeader"`
+	ProxyRules        []ProxyRule `yaml:"proxyRules"`
+	LivelinessPath    string      `yaml:"livelinessPath"`
 }
 
-func IsValidConfig(config Config) bool {
-	switch {
-	case len(config.Destination) == 0:
-		return false
-	}
-
-	return true
+func IsValidConfig(config Config) (bool, error) {
+	return true, nil
 }
 
 func GetDefaultConfig() Config {
 	config := Config{
 		LocalPort:      8080,
-		livelinessPath: "/alive",
+		LivelinessPath: "/alive",
 		// This default rule will result in authentication only
 		ProxyRules: []ProxyRule{{
 			Pattern: "/",
-			Claims: nil,
+			Claims:  nil,
 		}},
 	}
 
 	return config
+}
+
+func GetConfigFromFile(fileName string, config *Config) error {
+	yamlFile, err := ioutil.ReadFile(fileName)
+	if err != nil {
+		return &Error{
+			Code: ErrorInvalidConfig,
+			Msg:  fmt.Sprintf("Could not open config file: %s", fileName),
+			Err:  err,
+		}
+	}
+
+	*config = GetDefaultConfig()
+
+	err = yaml.Unmarshal(yamlFile, &config)
+	if err != nil {
+		return &Error{
+			Code: ErrorInvalidConfig,
+			Msg:  fmt.Sprintf("Could not parse yaml config file: %s", fileName),
+			Err:  err,
+		}
+	}
+
+	if valid, err := IsValidConfig(*config); !valid {
+		return &Error{
+			Code: ErrorInvalidConfig,
+			Msg:  fmt.Sprintf("Provided configuration is not valid"),
+			Err:  err,
+		}
+	}
+
+	return nil
 }
 
 func (c Config) getListenAddress() string {

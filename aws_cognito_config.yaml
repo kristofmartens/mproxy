@@ -1,0 +1,24 @@
+# Local port where the mproxy will listen on (default 8080)
+localPort: 8080
+# Location to forward all traffic to (mandatory)
+destination: http://localhost:80
+# Discovery URL of where to retrieve all OAUTH/OIDC endpoints (mandatory)
+discoveryUrl: https://cognito-idp.<region>.amazonaws.com/<UserPoolId>
+# HTTP header that contains the access token (mandatory)
+accessTokenHeader: X-Amzn-Oidc-Accesstoken
+# Defines the authorization proxy rules (default will allow all authenticated traffic)
+proxyRules:
+    # URL pattern
+  - pattern: /
+    # Checks the claims of the access token to verify whether all are valid
+    claims:
+        # The name of the claim to verify
+      - claimName: cognito:groups
+        # Allowed values in the claim
+        allowedClaims:
+          - admin
+          - user
+        # If true, all claims need to be present. Otherwise only one claim is required
+        requireAllClaims: false
+# Liveliness path to check whether service is still up
+livelinessPath: /alive

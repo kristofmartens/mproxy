@@ -17,4 +17,4 @@ type Error struct {
 	Err  error
 }
 
-func (e *Error) Error() string { return fmt.Sprintf("%d\t %q: %s", e.Code, e.Msg, e.Err) }
+func (e *Error) Error() string { return fmt.Sprintf("%d:%s\n%s", e.Code, e.Msg, e.Err) }
