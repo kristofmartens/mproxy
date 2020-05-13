@@ -3,7 +3,7 @@ localPort: 8080
 # Location to forward all traffic to (mandatory)
 destination: http://localhost:80
 # Discovery URL of where to retrieve all OAUTH/OIDC endpoints (mandatory)
-discoveryUrl: https://cognito-idp.<region>.amazonaws.com/<UserPoolId>
+discoveryUrl: https://cognito-idp.eu-west-1.amazonaws.com/eu-west-1_J0MjQeuaC
 # HTTP header that contains the access token (mandatory)
 accessTokenHeader: X-Amzn-Oidc-Accesstoken
 # Defines the authorization proxy rules (default will allow all authenticated traffic)
