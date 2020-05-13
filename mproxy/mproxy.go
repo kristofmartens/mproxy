@@ -50,9 +50,6 @@ func CreateProxy(config Config) (MProxy, error) {
 	return mp, nil
 }
 
-// Use this token for test purposes
-//const token = `eyJraWQiOiIxVTI3QU5cL1wvV3ZWWkszUGdKTlkwMGd3dFdXMWRTVjBJNjk5c05jVU5lbGM9IiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiJlNDliYWQ2YS1jMGU2LTQ0N2YtYTgxZC04ZGEwYjUxZjFkNzQiLCJjb2duaXRvOmdyb3VwcyI6WyJzX2Rxc19kZXZlbCIsInNfeDBhX2FkbWluIiwic194MGFfYXVkaXQiLCJzX2FkYV9hdWRpdCIsInNfZHFzX2F1ZGl0Iiwic19kcXNfYWRtaW4iLCJhZG1pbiIsInNfYWRhX2RldmVsIiwic194MGFfZGV2ZWwiLCJzX2FkYV9hZG1pbiJdLCJ0b2tlbl91c2UiOiJhY2Nlc3MiLCJzY29wZSI6Im9wZW5pZCBwcm9maWxlIiwiYXV0aF90aW1lIjoxNTg4Nzg0ODU0LCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAuZXUtd2VzdC0xLmFtYXpvbmF3cy5jb21cL2V1LXdlc3QtMV9KME1qUWV1YUMiLCJleHAiOjE1ODkzNjQyMzcsImlhdCI6MTU4OTM2MDYzNywidmVyc2lvbiI6MiwianRpIjoiMjE1NjVlMjgtMzk5Yi00NzA5LWI1NDQtYzlmMDE2ZmM3ZWQ5IiwiY2xpZW50X2lkIjoiMzlma2NoM2g0NWpoZ2xxMDhwNXBpdmdxdWwiLCJ1c2VybmFtZSI6IlNBTUxfSkU0MDU3NkBBQ0MtS0JDLUdST1VQLkNPTSJ9.Kr8WXt70DGio63wz_kLuNzjRgdU2zux5goPCyDaooRCBAFEeok9FrWR2WLOu3KOqzPt3MauXLRmvbeC1cFq5K97Orh5FAXjwC9XYs54YG3GUaMO3z4tueKY2MSR3z3BuOtA7ALs1dzKARyTb2WTvWEhKBprKluvgy-XieXqvIOwoO8BaNPh-rn3YMJwgCTpoyR3h1_T3VnBJ73IBIAJ5gdjKFD-liF3emouR9D43opVpwtjtn9pcDCn3Dckbd72clFAHT37hHT0SWzFdqbdzfwKLwB1PCaIWkmexjCMtv7l-cB1wrh9rQBAQ_y9_SqVumUDI_FZMP5q8B85agOkrdw`
-
 // Returns function that will return the right key
 func getKey(p *MProxy) func(token *jwt.Token) (interface{}, error) {
 	return func(token *jwt.Token) (interface{}, error) {
@@ -168,7 +165,7 @@ func (p *MProxy) StartProxy() error {
 	p.setRunning(true)
 	defer p.setRunning(false)
 
-	log.Println("Starting proxy server with config:\n", p)
+	log.Println("Starting the mproxy server")
 
 	// Start the actual proxy-ing
 	if err := http.ListenAndServe(p.config.getListenAddress(), nil); err != nil {

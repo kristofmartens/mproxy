@@ -40,13 +40,10 @@ func GetDefaultConfig() Config {
 	config := Config{
 		LocalPort:      8080,
 		livelinessPath: "/alive",
+		// This default rule will result in authentication only
 		ProxyRules: []ProxyRule{{
 			Pattern: "/",
-			Claims: []OIDCClaim{{
-				ClaimName:        "cognito:groups",
-				AllowedClaims:    []string{"admin", "s_ada_admin", "s_ada_devel"},
-				RequireAllClaims: false,
-			}},
+			Claims: nil,
 		}},
 	}
 
