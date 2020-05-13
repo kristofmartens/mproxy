@@ -2,12 +2,14 @@ package mproxy
 
 import (
 	"fmt"
+	"github.com/lestrrat/go-jwx/jwk"
 	"net/url"
 )
 
 type OIDCClaim struct {
-	ClaimName     string
-	AllowedClaims []string
+	ClaimName        string
+	AllowedClaims    []string
+	RequireAllClaims bool
 }
 
 type ProxyRule struct {
@@ -39,7 +41,11 @@ func GetDefaultConfig() Config {
 		livelinessPath: "/alive",
 		ProxyRules: []ProxyRule{{
 			Pattern: "/",
-			Claims:  nil,
+			Claims: []OIDCClaim{{
+				ClaimName:        "cognito:groups",
+				AllowedClaims:    []string{"admin", "s_ada_admin", "s_ada_devel"},
+				RequireAllClaims: false,
+			}},
 		}},
 	}
 
@@ -59,27 +65,28 @@ func (c Config) getURL() (*url.URL, error) {
 			Err:  err,
 		}
 	}
+
 	return destURL, err
 }
 
-func (c Config) getJWTKeys() (string, error) {
+func (c Config) getJWTKeys() (*jwk.Set, error) {
 	oidcCfg, err := httpGetJson(fmt.Sprintf("%s/%s", c.DiscoveryUrl, OidcConfig))
 	if err != nil {
-		return "", &Error{
+		return nil, &Error{
 			Code: ErrorHttpError,
 			Msg:  "Could not retrieve discovery URL",
 			Err:  err,
 		}
 	}
 
-	jwtKeys, err := httpGetJson(oidcCfg[OidcConfigJwksUri].(string))
+	jwtKeys, err := jwk.FetchHTTP(oidcCfg[OidcConfigJwksUri].(string))
 	if err != nil {
-		return "", &Error{
+		return nil, &Error{
 			Code: ErrorHttpError,
 			Msg:  "Could not retrieve JWT keys",
 			Err:  err,
 		}
 	}
 
-	return fmt.Sprintf("%v", jwtKeys), nil
+	return jwtKeys, nil
 }

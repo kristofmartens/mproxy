@@ -8,6 +8,7 @@ const (
 	ErrorInvalidConfig
 	ErrorProxyInitError
 	ErrorHttpError
+	ErrorKeyError
 )
 
 type Error struct {
