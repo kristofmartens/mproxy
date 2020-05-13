@@ -12,7 +12,7 @@ func getConfig() mproxy.Config {
 	flag.Parse()
 
 	if len(*cfg) == 0 {
-		fmt.Println("No or configuration provided")
+		fmt.Println("No configuration provided")
 		os.Exit(mproxy.ErrorInvalidConfig)
 	}
 

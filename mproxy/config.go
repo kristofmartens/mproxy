@@ -2,8 +2,8 @@ package mproxy
 
 import (
 	"fmt"
+	"github.com/go-yaml/yaml"
 	"github.com/lestrrat/go-jwx/jwk"
-	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"net/url"
 )
