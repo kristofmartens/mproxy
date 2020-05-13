@@ -9,6 +9,7 @@ import (
 type OIDCClaim struct {
 	ClaimName        string
 	AllowedClaims    []string
+	// TODO: Not yet implemented functionality
 	RequireAllClaims bool
 }
 

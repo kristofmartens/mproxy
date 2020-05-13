@@ -148,6 +148,7 @@ func (p *MProxy) StartProxy() error {
 				}
 
 				// You are allowed to proxy this request
+				// TODO: Add extra headers to identify the mproxy
 				httputil.NewSingleHostReverseProxy(p.destURL).ServeHTTP(writer, request)
 
 			})
