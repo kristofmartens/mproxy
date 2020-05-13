@@ -1,2 +1,7 @@
 .dockerignore
+.gitignore
+.git
+.idea
+.DS_Store
 Dockerfile
+helm
