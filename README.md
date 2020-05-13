@@ -80,7 +80,7 @@ ingress:
   enabled: true
   annotations: {}
   hosts:
-    - host: spark-history-server-ada.dev.pou.aws.infra003.com
+    - host: <service-name>.yourdomain.com
       paths:
         - /
   tls: []
