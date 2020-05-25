@@ -11,7 +11,11 @@ use custom claims in their access tokens.
 ## How to build and install
 Make sure that the go tools and your go path are set correctly. Building and installing should be as simple as:
 ```shell script
+# Building from local version
 cd cmd/mproxy && go get && go install
+
+# Install directly from github
+go install github.com/kristofmartens/mproxy/cmd/mproxy
 ```
 There is also a Dockerfile available for running this image in your kubernetes cluster. Using this proxy as a side-car
 to authorize your services in a kubernetes cluster.
