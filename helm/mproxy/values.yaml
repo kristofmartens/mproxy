@@ -5,7 +5,7 @@
 replicaCount: 1
 
 image:
-  repository: mproxy
+  repository: martensk/mproxy
   tag: 0.1.0
   pullPolicy: IfNotPresent
 
@@ -87,11 +87,11 @@ resources: {}
   # resources, such as Minikube. If you do want to specify resources, uncomment the following
   # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
   # limits:
-  #   cpu: 100m
-  #   memory: 128Mi
+  #   cpu: 20m
+  #   memory: 32Mi
   # requests:
-  #   cpu: 100m
-  #   memory: 128Mi
+  #   cpu: 50m
+  #   memory: 32Mi
 
 nodeSelector: {}
 

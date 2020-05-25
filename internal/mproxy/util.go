@@ -2,9 +2,31 @@ package mproxy
 
 import (
 	"encoding/json"
+	"flag"
 	"fmt"
 	"net/http"
+	"os"
 )
+
+func GetConfig() Config {
+	cfg := flag.String("config", "", "Path to config file defining authorization rules")
+	flag.Parse()
+
+	if len(*cfg) == 0 {
+		fmt.Println("No configuration provided")
+		os.Exit(ErrorInvalidConfig)
+	}
+
+	config := GetDefaultConfig()
+
+	err := GetConfigFromFile(*cfg, &config)
+	if err != nil {
+		fmt.Println(err.Error())
+		os.Exit(err.(*Error).Code)
+	}
+
+	return config
+}
 
 func httpGetJson(url string) (map[string]interface{}, error) {
 	resp, err := http.Get(url)
