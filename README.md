@@ -27,7 +27,7 @@ For more information about how to use and install helm please go to https://helm
 ## Running the proxy
 MProxy requires a config file in yaml format only requiring a small set of parameters. You start the proxy like this:
 ```shell script
-mproxy -config <config-file>
+mproxy --config <config-file>
 ```
 Here is an example configuration file for use with AWS Cognito:
 ```yaml
