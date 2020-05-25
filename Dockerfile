@@ -1,9 +1,9 @@
 FROM amazonlinux:2 as build
 
 RUN yum update -y && yum install -y golang git && yum clean all && rm -rf /var/cache/yum
-WORKDIR /root/go/src/mproxy
+WORKDIR /root
 COPY . .
-RUN go get && go install
+RUN cd cmd/mproxy && go get && go install
 
 FROM amazonlinux:2
 
