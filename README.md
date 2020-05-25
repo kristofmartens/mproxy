@@ -14,8 +14,9 @@ Make sure that the go tools and your go path are set correctly. Building and ins
 # Building from local version
 cd cmd/mproxy && go get && go install
 
-# Install directly from github
-go install github.com/kristofmartens/mproxy/cmd/mproxy
+# Build directly from github, put binary somewhere in $PATH
+go get github.com/kristofmartens/mproxy/cmd/mproxy
+go build github.com/kristofmartens/mproxy/cmd/mproxy
 ```
 There is also a Dockerfile available for running this image in your kubernetes cluster. Using this proxy as a side-car
 to authorize your services in a kubernetes cluster.
