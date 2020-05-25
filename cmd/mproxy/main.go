@@ -2,13 +2,14 @@ package main
 
 import (
 	"fmt"
+	"github.com/kristofmartens/mproxy/internal/cli"
 	"github.com/kristofmartens/mproxy/internal/mproxy"
 	"os"
 )
 
 func main() {
 	// Retrieve the configuration for the proxy server
-	config := mproxy.GetConfig()
+	config := cli.ParseCli()
 
 	// Create the proxy server based on the provided configuration
 	proxyServer, err := mproxy.CreateProxy(config)
