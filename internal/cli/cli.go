@@ -20,7 +20,7 @@ func ParseCli() mproxy.Config {
 
 	err := mproxy.GetConfigFromFile(*cfg, &config)
 	if err != nil {
-		kingpin.FatalUsage("Could not read config file: %s", cfg)
+		kingpin.FatalUsage("Could not read config file: %s", *cfg)
 	}
 
 	return config
