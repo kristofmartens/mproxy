@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"net/url"
+	"regexp"
 )
 
 const (
@@ -123,6 +124,11 @@ func (p *MProxy) StartProxy() error {
 					allowed := false
 					for _, allowedClaim := range claim.AllowedClaims {
 						for _, receivedClaim := range claimValues.([]interface{}) {
+							matched, err := regexp.MatchString(allowedClaim, receivedClaim.(string))
+							if err == nil && matched == true {
+								allowed= true
+								break
+							}
 							if allowedClaim == receivedClaim.(string) {
 								allowed = true
 								break
