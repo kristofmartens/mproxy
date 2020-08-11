@@ -48,10 +48,11 @@ proxyRules:
     claims:
         # The name of the claim to verify
       - claimName: cognito:groups
-        # Allowed values in the claim
+        # Allowed values in the claim, regular expressions are also allowed!
         allowedClaims:
           - admin
           - user
+          - regex_group_[a-z|0-9]{3}
         # If true, all claims need to be present. Otherwise only one claim is required
         requireAllClaims: false
 # Liveliness path to check whether service is still up

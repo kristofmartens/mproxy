@@ -126,10 +126,6 @@ func (p *MProxy) StartProxy() error {
 						for _, receivedClaim := range claimValues.([]interface{}) {
 							matched, err := regexp.MatchString(allowedClaim, receivedClaim.(string))
 							if err == nil && matched == true {
-								allowed= true
-								break
-							}
-							if allowedClaim == receivedClaim.(string) {
 								allowed = true
 								break
 							}
